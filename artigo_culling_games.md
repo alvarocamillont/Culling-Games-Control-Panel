@@ -2,7 +2,6 @@
 
 Olá, dev! Se você se interessa por arquiteturas de software modernas e engenharia orientada a agentes de inteligência artificial, este projeto traz um estudo de caso prático e interessante. Vamos analisar a construção do **Culling Games Control Panel**: uma aplicação de controle e monitoramento baseada no universo de *Jujutsu Kaisen*.
 
-
 Neste artigo, veremos como foi construída uma SPA (Single Page Application) com suporte a SSR (Server-Side Rendering) que gerencia participantes, exibe estatísticas em tempo real, registra logs de atividade e permite a simulação de regras temáticas (como a transferência de pontuações). 
 
 Mais do que apenas um exemplo estético, este projeto é um exemplo didático de **Engenharia de Software AI-Native**, demonstrando a transição de um protótipo visual concebido no **Google AI Studio** para uma base de código de produção desenvolvida localmente com o agente **Antigravity** sob o framework de especificação **OpenSpec** e utilizando as tecnologias mais recentes do **Angular**.
