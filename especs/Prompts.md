@@ -1,1 +1,3 @@
 Você deve criar e encapsular todo o projeto atual dentro de uma pasta raiz chamada exatamente `ux example`.  Menos a pasta especs
+
+/opsx:propose create-culling-game utilize a espec [basic_espec.md](file;file:///Users/alvarocamilloneto/antigravity/Culling-Games-Control-Panel/especs/basic_espec.md) para criar a especificacao e para o template utilize como modelo oque esta na pasta [index.html](file;file:///Users/alvarocamilloneto/antigravity/Culling-Games-Control-Panel/ux%20example/index.html). utilize as melhores praticas do Angula, utilize as skill instaladas aqui
