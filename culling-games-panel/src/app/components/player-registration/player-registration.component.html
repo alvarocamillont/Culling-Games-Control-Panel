@@ -1,0 +1,93 @@
+<div>
+  <h2 class="text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-4 flex items-center gap-2">
+    <span class="w-4 h-[1px] bg-zinc-700"></span> Player Registration
+  </h2>
+</div>
+
+<form (submit)="onSubmit(); $event.preventDefault()" class="space-y-4">
+  <!-- Name field -->
+  <div class="space-y-1.5">
+    <label class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">
+      Sorcerer Name <span class="text-red-500">*</span>
+    </label>
+    <input 
+      type="text" 
+      [formField]="registrationForm.name"
+      placeholder="e.g., Hajime Kashimo" 
+      class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500 placeholder:text-zinc-700 transition"
+    >
+    @if (registrationForm.name().touched() && registrationForm.name().errors().length) {
+      <div class="text-red-500 text-[9px] uppercase tracking-wider font-mono font-bold mt-1">
+        {{ registrationForm.name().errors()[0].message }}
+      </div>
+    }
+  </div>
+
+  <!-- Colony dropdown -->
+  <div class="space-y-1.5">
+    <label class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">
+      Starting Colony <span class="text-red-500">*</span>
+    </label>
+    <select 
+      [formField]="registrationForm.colony"
+      class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:ring-1 focus:ring-purple-500 transition"
+    >
+      <option value="Tokyo Colony No. 1">Tokyo Colony No. 1</option>
+      <option value="Tokyo Colony No. 2">Tokyo Colony No. 2</option>
+      <option value="Sendai Colony">Sendai Colony</option>
+      <option value="Sakurajima Colony">Sakurajima Colony</option>
+      <option value="Kyoto Colony">Kyoto Colony</option>
+      <option value="Iwate Colony">Iwate Colony</option>
+    </select>
+  </div>
+
+  <!-- Cursed Technique text area -->
+  <div class="space-y-1.5">
+    <label class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">
+      Cursed Technique Specification <span class="text-zinc-600">(Optional)</span>
+    </label>
+    <textarea 
+      [formField]="registrationForm.technique"
+      rows="2"
+      placeholder="Describe intrinsic technique, domain expansion, or cursed tools..." 
+      class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500 placeholder:text-zinc-700 resize-none scrollbar-thin"
+    ></textarea>
+  </div>
+
+  <!-- Points & Status fields -->
+  <div class="grid grid-cols-2 gap-4">
+    <div class="space-y-1.5">
+      <label class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Starting Points</label>
+      <input 
+        type="number" 
+        [formField]="registrationForm.points"
+        class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-purple-500 transition"
+      >
+      @if (registrationForm.points().touched() && registrationForm.points().errors().length) {
+        <div class="text-red-500 text-[9px] uppercase tracking-wider font-mono font-bold mt-1">
+          {{ registrationForm.points().errors()[0].message }}
+        </div>
+      }
+    </div>
+    <div class="space-y-1.5">
+      <label class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Initial Status</label>
+      <select 
+        [formField]="registrationForm.status"
+        class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:ring-1 focus:ring-purple-500 transition"
+      >
+        <option value="Alive">Alive (Green)</option>
+        <option value="Deceased">Deceased (Red)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Submit button -->
+  <button 
+    type="submit" 
+    [disabled]="registrationForm().invalid() || registrationForm().pending()"
+    class="w-full bg-red-600 hover:bg-red-700 disabled:bg-zinc-850 disabled:text-zinc-600 disabled:shadow-none text-white font-bold py-4 rounded text-xs uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(220,38,38,0.2)] flex items-center justify-center gap-2 transition-all cursor-pointer disabled:cursor-not-allowed"
+  >
+    Enter the Culling Game
+  </button>
+  <p class="text-[8px] text-zinc-600 text-center mt-3 uppercase tracking-tighter">Warning: Binding vow active upon submission.</p>
+</form>

@@ -1,3 +1,79 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Space Grotesk', sans-serif;
+
+  --color-zinc-950: #09090b;
+  --color-zinc-900: #121214;
+  --color-zinc-850: #1a1a1e;
+  --color-zinc-800: #222226;
+  --color-zinc-750: #2d2d33;
+  --color-zinc-700: #3a3a42;
+  --color-zinc-600: #52525b;
+  --color-zinc-500: #71717a;
+  --color-zinc-400: #a1a1aa;
+  --color-zinc-300: #d4d4d8;
+  --color-zinc-200: #e4e4e7;
+  --color-zinc-100: #f4f4f5;
+}
+
+/* Custom scanlines and animations */
+.scanlines {
+  position: relative;
+}
+.scanlines::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 4px, 6px 100%;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0.15;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #09090b;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #222226;
+  border-radius: 3px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #3a3a42;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.4;
+    box-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+  }
+}
+.warning-pulse {
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes green-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+  }
+}
+.active-pulse {
+  animation: green-pulse 1.8s infinite ease-in-out;
+}

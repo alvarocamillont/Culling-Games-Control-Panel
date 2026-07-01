@@ -1,0 +1,57 @@
+<div 
+  [class]="'fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-all duration-300 ' + 
+           (isOpen() ? '' : 'hidden')"
+>
+  <div class="bg-zinc-900 border border-zinc-800 rounded-lg w-full max-w-2xl max-h-[85vh] flex flex-col shadow-[0_0_50px_rgba(139,92,246,0.15)]">
+    <!-- Header -->
+    <div class="p-5 border-b border-zinc-800 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="w-2.5 h-2.5 bg-purple-500 rounded-full"></span>
+        <div>
+          <h3 class="font-display font-bold text-zinc-100 uppercase tracking-widest text-sm">Culling Game Declarative Rules</h3>
+          <p class="text-zinc-500 font-mono text-[10px] uppercase">The binding vow governing Kenjaku's game board</p>
+        </div>
+      </div>
+      <button (click)="onClose()" class="text-zinc-500 hover:text-zinc-200 transition p-1 cursor-pointer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <!-- Content -->
+    <div class="p-6 overflow-y-auto scrollbar-thin space-y-4 text-xs font-mono leading-relaxed text-zinc-400">
+      <p class="text-zinc-300 italic mb-3">"Players are given points by killing other sorcerers. Points correspond to the life of Jūjutsu Sorcerers or Non-Sorcerers..."</p>
+      
+      <div class="space-y-3.5">
+        <div>
+          <span class="text-purple-400 font-bold block mb-1">RULE 1 • DECLARATIVE PARTICIPATION</span>
+          <p>Upon gaining a cursed technique or waking up inside a barrier, players must declare participation in the Culling Game in their starting colony within 19 days.</p>
+        </div>
+        <div class="h-px bg-zinc-800/80"></div>
+        <div>
+          <span class="text-purple-400 font-bold block mb-1">RULE 2 • PENALTY OF DEATH</span>
+          <p>Any player who breaks Rule 1 shall suffer cursed technique extraction, which inevitably results in immediate brain death and cardiac arrest.</p>
+        </div>
+        <div class="h-px bg-zinc-800/80"></div>
+        <div>
+          <span class="text-purple-400 font-bold block mb-1">RULE 5 • ACQUIRING POINTS</span>
+          <p>Players obtain points by taking the life of other participants. Shaman/Sorcerer deaths yield 5 points. Non-shaman deaths yield 1 point.</p>
+        </div>
+        <div class="h-px bg-zinc-800/80"></div>
+        <div>
+          <span class="text-purple-400 font-bold block mb-1">RULE 10 • POINT TRANSFER</span>
+          <p>Players may transfer any number of their points to another participant. Koganes will act as the intermediary agent for all score adjustments.</p>
+        </div>
+        <div class="h-px bg-zinc-800/80"></div>
+        <div>
+          <span class="text-purple-400 font-bold block mb-1">RULE 11 • CUSTOM RULE ADDITION</span>
+          <p>Except where it would have a significant negative impact on the longevity of the game, players may spend 100 points to negotiate and add a new rule to the Game Board with their Kogane.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Footer -->
+    <div class="p-4 bg-zinc-950 border-t border-zinc-800 flex justify-end">
+      <button (click)="onClose()" class="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded font-mono text-xs uppercase tracking-wider transition cursor-pointer">Acknowledge Rules</button>
+    </div>
+  </div>
+</div>

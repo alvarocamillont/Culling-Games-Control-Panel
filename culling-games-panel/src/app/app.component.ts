@@ -1,12 +1,10 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { CullingGamesBoardComponent } from './components/culling-games-board/culling-games-board.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [CullingGamesBoardComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class App {
-  protected readonly title = signal('culling-games-panel');
-}
+export class App {}
