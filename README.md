@@ -1,5 +1,6 @@
 # 🏯 死滅回游 • Culling Games Control Panel
 
+> 🚀 Submissão oficial para a **Agentic Architect Sprint**
 > *"Que comecem os Jogos do Abate. Que a energia amaldiçoada flua!"*
 
 Bem-vindo ao **Culling Games Control Panel**, um painel tático de controle e monitoramento para o Jogo do Abate (*Shimi Kairui* - de *Jujutsu Kaisen*). Este repositório foi construído para servir de **projeto de estudo didático para Engenharia AI-Native**, demonstrando como criar aplicações modernas com Angular de forma colaborativa com agentes de inteligência artificial autônomos.
