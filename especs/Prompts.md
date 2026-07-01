@@ -1,0 +1,1 @@
+Você deve criar e encapsular todo o projeto atual dentro de uma pasta raiz chamada exatamente `ux example`.  Menos a pasta especs
