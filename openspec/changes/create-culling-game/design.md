@@ -2,7 +2,7 @@
 
 A aplicação do Painel de Controle dos Culling Games (Jogo do Abate) será uma SPA (Single Page Application) desenvolvida em Angular com Server-Side Rendering (SSR). Ela fornecerá uma interface tática em tempo real para gerenciar feiticeiros e seus pontos. Como não há um backend persistente externo, o estado dos participantes será gerenciado em memória pelo próprio servidor SSR do Angular (`server.ts`) e persistido temporariamente via LocalStorage no cliente como fallback.
 
-A interface visual completa da aplicação já está totalmente desenhada no modelo de UX em [index.html](file:///Users/alvarocamilloneto/antigravity/Culling-Games-Control-Panel/ux%20example/index.html). Embora o protótipo apresente uma estrutura que simula componentes (próxima ao React/HTML estático), o objetivo deste projeto é traduzir esse layout e toda a sua riqueza visual (estilização Tailwind CSS, classes, cores, scanlines e animações) para a arquitetura de componentes do Angular.
+A interface visual completa da aplicação já está totalmente desenhada no modelo de UX em [index.html](../../../ux%20example/index.html). Embora o protótipo apresente uma estrutura que simula componentes (próxima ao React/HTML estático), o objetivo deste projeto é traduzir esse layout e toda a sua riqueza visual (estilização Tailwind CSS, classes, cores, scanlines e animações) para a arquitetura de componentes do Angular.
 
 ## Goals / Non-Goals
 

@@ -20,9 +20,9 @@ graph TD
 
 ### 🤖 Ferramentas de IA Utilizadas
 
-1. **Google AI Studio (Prototipação Rápida):** A interface inicial, design system, paleta de cores e comportamento visual foram concebidos e refinados visualmente no AI Studio (dentro da pasta [`ux example`](file:///Users/alvarocamilloneto/antigravity/Culling-Games-Control-Panel/ux%20example)).
+1. **Google AI Studio (Prototipação Rápida):** A interface inicial, design system, paleta de cores e comportamento visual foram concebidos e refinados visualmente no AI Studio (dentro da pasta [`ux example`](./ux%20example)).
 2. **Antigravity (Orquestrador de Codificação):** O agente autônomo Antigravity foi utilizado como o engenheiro principal de codificação local, traduzindo as especificações do protótipo em código Angular real de alta performance.
-3. **OpenSpec Framework:** Framework de especificação e controle de ciclo de vida usado para planejar e documentar o desenvolvimento através de especificações delta (contidas em [`especs/basic_espec.md`](file:///Users/alvarocamilloneto/antigravity/Culling-Games-Control-Panel/especs/basic_espec.md)), garantindo que a IA executasse tarefas orientadas a metas estruturadas.
+3. **OpenSpec Framework:** Framework de especificação e controle de ciclo de vida usado para planejar e documentar o desenvolvimento através de especificações delta (contidas em [`especs/basic_espec.md`](./especs/basic_espec.md)), garantindo que a IA executasse tarefas orientadas a metas estruturadas.
 4. **Angular Agent Skills:** O desenvolvimento usou as regras oficiais de boas práticas de IA do Angular (`angular-developer` skill), aplicando reatividade moderna, arquitetura desacoplada e padrões recomendados de performance.
 
 ---
@@ -35,7 +35,7 @@ A aplicação foi desenvolvida sob os pilares do **Angular Moderno** e estilizad
 - **Frontend Core:** **Angular v22** rodando com Componentes Standalone e o novo motor de fluxo de controle nativo (`@if`, `@for`).
 - **Reatividade Nativa:** Estado reativo gerido 100% via **Angular Signals** (`signal`, `computed`, `effect`), dispensando o uso de RxJS para a gerência de UI direta.
 - **Estilização:** **Tailwind CSS v4** com abordagem *utility-first* e tema escuro customizado.
-- **Backend / SSR:** Arquitetura híbrida de renderização do lado do servidor (**Angular SSR** com Express em [`server.ts`](file:///Users/alvarocamilloneto/antigravity/Culling-Games-Control-Panel/culling-games-panel/src/server.ts)), servindo endpoints REST em memória para persistência de dados.
+- **Backend / SSR:** Arquitetura híbrida de renderização do lado do servidor (**Angular SSR** com Express em [`server.ts`](./culling-games-panel/src/server.ts)), servindo endpoints REST em memória para persistência de dados.
 
 ### 📁 Estrutura de Componentes (Metáfora Jujutsu Kaisen)
 
