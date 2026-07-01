@@ -6,7 +6,7 @@ Mais do que apenas um exemplo estético, este projeto é um exemplo didático de
 
 ---
 
-## 🔮 Arquitetura de Desenvolvimento Orientada a Agentes (AI-Native)
+## Arquitetura de Desenvolvimento Orientada a Agentes (AI-Native)
 
 Antes de detalharmos o código, vale ressaltar que a aplicação foi desenvolvida seguindo um fluxo de trabalho moderno em que o desenvolvedor humano atua como arquiteto e revisor de decisões executadas por agentes autônomos de IA:
 
@@ -90,7 +90,7 @@ app.put('/api/players/:id/points', (req, res) => {
 
 ---
 
-## 3. Reatividade Moderna: Angular Signals-based Forms ⚡
+## 3. Reatividade Moderna: Angular Signals-based Forms 
 
 Uma das maiores novidades no ecossistema do Angular é a introdução experimental da biblioteca de formulários reativos baseados em sinais (`@angular/forms/signals`). Este projeto serve como um ótimo estudo de caso para entender como ligar campos de entrada a sinais atômicos de reatividade nativa sem depender de fluxos complexos de RxJS ou da reatividade tradicional baseada em objetos do FormGroup.
 
@@ -186,7 +186,7 @@ Em substituição ao Karma tradicional, o projeto utiliza o **Vitest**, um test 
   npx ng test
   ```
 
-### 🎭 Testes End-to-End (E2E) com Playwright
+### Testes End-to-End (E2E) com Playwright
 O **Playwright** realiza testes completos simulando o fluxo de uso da aplicação em navegadores reais. Ele valida interações complexas como o registro de feiticeiros, a transferência de pontuações entre participantes vivos e as restrições impostas por regras de negócio (como bloquear transações de pontos para personagens declarados como mortos).
 
 O arquivo `playwright.config.ts` possui uma diretiva `webServer` que inicializa o servidor de desenvolvimento local de forma autônoma e aguarda a porta `4200` estar ativa antes de iniciar a suíte.
@@ -202,7 +202,43 @@ O arquivo `playwright.config.ts` possui uma diretiva `webServer` que inicializa 
 
 ---
 
-## 🏃 Como Executar a Aplicação Localmente
+## 5. Extensibilidade Agêntica: Skills de IA & Atuação no Navegador (`/browser`)
+
+Um dos maiores diferenciais deste projeto de Engenharia AI-Native é a forma como o agente de IA é guiado por diretrizes específicas de desenvolvimento e realiza verificações em tempo real.
+
+### Como Instalar e Utilizar as Skills do Angular e OpenSpec
+
+Para ensinar estes padrões modernos ao seu agente de codificação e habilitar este fluxo de trabalho no seu próprio repositório:
+
+1. **Instalação das Skills Oficiais do Angular:**
+   Utilize a CLI de gerenciamento de skills do Angular (através do `npx`) para injetar as diretrizes de reatividade moderna no contexto do agente:
+   ```bash
+   npx skills add https://github.com/angular/skills
+   ```
+   Isso adicionará a pasta `.agents/skills/angular-developer` no seu workspace, contendo o arquivo `SKILL.md` com instruções detalhadas sobre Signals, Componentes Standalone e boas práticas que o agente consumirá antes de codificar.
+
+2. **Instalação do CLI do OpenSpec:**
+   O OpenSpec permite gerenciar o ciclo de vida das especificações de mudanças através de um conjunto de comandos simples. Instale-o globalmente em sua máquina usando:
+   ```bash
+   npm install -g @fission-ai/openspec@latest
+   ```
+   Após a instalação, você pode iniciar o framework no seu repositório rodando:
+   ```bash
+   openspec init
+   ```
+   Isso cria a pasta `.agent/workflows/` (contendo comandos integrados como `/opsx:propose`, `/opsx:apply` e `/opsx:archive`), estruturando a transição segura e rastreável de tarefas feitas por agentes.
+
+### Verificação de UI com Atuação de Navegador (`/browser`)
+Os testes e2e não precisam ser verificados apenas via console. Durante o ciclo de vida do OpenSpec, o desenvolvedor ou o próprio agente pode executar comandos de verificação visual por meio de ferramentas de automação baseadas em Chrome Headless (com a diretiva `/browser` ou ferramentas de subagentes de navegação). 
+
+Isso garante que o agente:
+- Inicie a build do servidor local em segundo plano.
+- Abra o navegador automaticamente, navegue pela aplicação e interaja com os elementos DOM (ex: preencher o formulário de cadastro, clicar nos botões de incremento de pontos).
+- Capture imagens e vídeos (WebP) do fluxo de telas para validar de forma autônoma a fidelidade visual e a coerência estética das interfaces em relação ao design concebido no AI Studio.
+
+---
+
+## Como Executar a Aplicação Localmente
 
 Após instalar as dependências com `npm install`, inicie o servidor local:
 
@@ -216,11 +252,14 @@ Acesse o endereço [http://localhost:4200](http://localhost:4200) em seu navegad
 
 ## Conclusão e Próximos Passos
 
-Este repositório é um exemplo prático de como novas ferramentas de IA generativa facilitam a prototipação e a codificação, fornecendo uma base de estudo rica tanto para arquitetura moderna do Angular quanto para o desenvolvimento de software auxiliado por agentes autônomos.
+Este repositório é um exemplo prático de como novas ferramentas de IA generativa facilitam a prototipação e a codificação, fornecendo uma base de estudo rica tanto para a arquitetura moderna do Angular quanto para o desenvolvimento de software auxiliado por agentes autônomos.
 
 Se você deseja avançar no estudo deste projeto, sugerimos os seguintes exercícios:
 1. **Persistência de dados externa:** Substituir a lista em memória no servidor SSR por conexões a um banco de dados real.
 2. **Integração com IA:** Consumir a API do Gemini no backend Express para gerar comentários automáticos em formato de notícias do Kogane sempre que um feiticeiro ganhar pontos ou for registrado no jogo.
 3. **Novas regras de negócio:** Estender a validação de formulários baseada em sinais para incluir novas colônias e tipos de habilidades.
 
-Todo o código-fonte, suítes de teste e configurações estão contidos neste repositório. Bons estudos!
+Todo o código-fonte, suítes de teste e especificações estão contidos neste repositório:
+**[Repositório no GitHub](https://github.com/alvarocamillont/Culling-Games-Control-Panel)**
+
+Bons estudos e até o próximo projeto!

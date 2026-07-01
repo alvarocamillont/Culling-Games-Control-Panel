@@ -18,12 +18,22 @@ graph TD
     D -- Validação Contínua --> E[Vitest & Playwright]
 ```
 
-### 🤖 Ferramentas de IA Utilizadas
+### 🤖 Ferramentas de IA & Extensibilidade Agêntica
 
 1. **Google AI Studio (Prototipação Rápida):** A interface inicial, design system, paleta de cores e comportamento visual foram concebidos e refinados visualmente no AI Studio (dentro da pasta [`ux example`](./ux%20example)).
 2. **Antigravity (Orquestrador de Codificação):** O agente autônomo Antigravity foi utilizado como o engenheiro principal de codificação local, traduzindo as especificações do protótipo em código Angular real de alta performance.
 3. **OpenSpec Framework:** Framework de especificação e controle de ciclo de vida usado para planejar e documentar o desenvolvimento através de especificações delta (contidas em [`especs/basic_espec.md`](./especs/basic_espec.md)), garantindo que a IA executasse tarefas orientadas a metas estruturadas.
-4. **Angular Agent Skills:** O desenvolvimento usou as regras oficiais de boas práticas de IA do Angular (`angular-developer` skill), aplicando reatividade moderna, arquitetura desacoplada e padrões recomendados de performance.
+4. **Instalação das Skills e Ferramental de Agente:**
+   - **Angular Skills:** Instaladas no projeto executando a CLI de gerenciamento de skills oficial do Angular via `npx`:
+     ```bash
+     npx skills add https://github.com/angular/skills
+     ```
+     Isso cria a pasta `.agents/skills/angular-developer/` no workspace com o arquivo `SKILL.md` de boas práticas que o agente lê para gerar código.
+   - **OpenSpec CLI:** Instalado globalmente em sua máquina com o comando:
+     ```bash
+     npm install -g @fission-ai/openspec@latest
+     ```
+     E inicializado no diretório do projeto com `openspec init`, configurando a pasta `.agent/workflows/` (comandos `/opsx:propose`, `/opsx:apply`, etc.) para controlar o ciclo de vida das tarefas.
 
 ---
 
@@ -109,6 +119,9 @@ O **Playwright** realiza testes ponta a ponta simulando as interações reais do
   npm run e2e:ui
   ```
 
+### 3. Verificação com Atuação no Navegador (`/browser`)
+Os testes visuais e fluxos de regressão estética do painel foram validados em tempo real no Chrome Headless por meio da diretiva `/browser` (ferramenta de subagente de navegação do Antigravity). O agente executa autonomamente o servidor Express de produção, acessa as páginas web, clica nos elementos e captura telas/vídeos para checagem estática antes de confirmar a entrega do código.
+
 ---
 
 ## 📜 Regras do Jogo do Abate Implementadas
@@ -123,4 +136,9 @@ O painel de controle respeita fielmente as regras originais do mangá/anime:
 
 ---
 
-*Este projeto é uma sandbox para você brincar com o Angular moderno e entender como agentes baseados em IA podem construir código altamente estruturado e coberto por testes. Sinta-se livre para expandir as regras de Kenjaku!*
+## 🔗 Repositório Oficial do Projeto
+
+Todo o código-fonte, especificações do OpenSpec, testes e documentação didática do Jogo do Abate estão hospedados em:
+👉 **[GitHub - Culling Games Control Panel](https://github.com/alvarocamillont/Culling-Games-Control-Panel)**
+
+*Este projeto é uma sandbox para você brincar com o Angular moderno e entender como agentes baseados em IA podem construir código altamente estruturado e coberto por testes. Sinta-se livre para expandir as regras de Kenjaku!* 🏯⚔️
