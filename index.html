@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Culling Games Control Panel • 死滅回游</title>
+    <!-- Google Fonts for Tactical Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+              display: ['Space Grotesk', 'sans-serif'],
+            },
+            colors: {
+              zinc: {
+                950: '#09090b',
+                900: '#121214',
+                850: '#1a1a1e',
+                800: '#222226',
+                750: '#2d2d33',
+                700: '#3a3a42',
+                600: '#52525b',
+                500: '#71717a',
+                400: '#a1a1aa',
+                300: '#d4d4d8',
+                200: '#e4e4e7',
+                100: '#f4f4f5',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style type="text/css">
+      /* Custom scanlines and animations */
+      .scanlines {
+        position: relative;
+      }
+      .scanlines::before {
+        content: " ";
+        display: block;
+        position: absolute;
+        top: 0; left: 0; bottom: 0; right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+        background-size: 100% 4px, 6px 100%;
+        z-index: 10;
+        pointer-events: none;
+        opacity: 0.15;
+      }
+      .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      .scrollbar-thin::-webkit-scrollbar-track {
+        background: #09090b;
+      }
+      .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: #222226;
+        border-radius: 3px;
+      }
+      .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background: #3a3a42;
+      }
+      @keyframes pulse-glow {
+        0%, 100% {
+          opacity: 0.4;
+          box-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
+        }
+        50% {
+          opacity: 1;
+          box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+        }
+      }
+      .warning-pulse {
+        animation: pulse-glow 2s infinite ease-in-out;
+      }
+      @keyframes green-pulse {
+        0%, 100% {
+          transform: scale(1);
+          box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+        }
+        50% {
+          transform: scale(1.1);
+          box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+        }
+      }
+      .active-pulse {
+        animation: green-pulse 1.8s infinite ease-in-out;
+      }
+    </style>
+  </head>
+  <body class="bg-zinc-950 text-zinc-300 font-sans h-screen overflow-hidden flex flex-col border-4 border-zinc-900 select-none scanlines selection:bg-purple-900 selection:text-purple-100">
+
+    <!-- TOP NAVIGATION / SYSTEM STATUS -->
+    <header class="h-14 border-b border-zinc-800 bg-zinc-950 flex items-center justify-between px-6 shrink-0 z-20">
+      <div class="flex items-center gap-4">
+        <div class="w-3 h-3 rounded-full bg-red-600 warning-pulse flex shrink-0"></div>
+        <div class="flex items-center gap-3">
+          <h1 class="font-mono text-xs uppercase tracking-[0.3em] text-zinc-100 font-bold">Culling Game // Central Control Panel</h1>
+          <span class="px-1.5 py-0.5 bg-red-950/40 border border-red-900/60 text-red-500 font-mono text-[9px] tracking-widest font-bold rounded">死滅回游</span>
+        </div>
+      </div>
+      <div class="flex gap-8 font-mono text-[10px] text-zinc-500 uppercase tracking-widest">
+        <div class="flex flex-col items-end">
+          <span class="text-zinc-400">System Clock</span>
+          <span id="system-clock" class="text-emerald-400 font-bold">2026-06-30 18:25:23 UTC</span>
+        </div>
+        <div class="hidden md:flex flex-col items-end border-l border-zinc-800 pl-8 font-mono text-[10px]">
+          <span class="text-zinc-400">Encryption</span>
+          <span class="text-purple-400">Grade 1 Static</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN BODY SECTION -->
+    <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+
+      <!-- LEFT PANEL: REGISTRATION ZONE & LOGS (320px width) -->
+      <section class="w-full md:w-[320px] bg-zinc-900/50 border-r border-zinc-800 flex flex-col h-full overflow-hidden shrink-0">
+        
+        <!-- Tab Selectors for Left Side -->
+        <div class="flex border-b border-zinc-800 font-mono text-xs uppercase shrink-0">
+          <button id="tab-register-btn" onclick="switchLeftTab('register')" class="flex-1 py-3 text-center border-b-2 border-purple-500 text-purple-400 font-bold bg-zinc-900/50 transition">
+            Participation
+          </button>
+          <button id="tab-transfer-btn" onclick="switchLeftTab('transfer')" class="flex-1 py-3 text-center border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 transition">
+            Point Transfer
+          </button>
+        </div>
+
+        <!-- Scrollable content area -->
+        <div class="flex-1 overflow-y-auto p-5 scrollbar-thin space-y-6">
+
+          <!-- TAB 1: REGISTRATION FORM -->
+          <div id="left-tab-register" class="space-y-5">
+            <div>
+              <h2 class="text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-4 flex items-center gap-2">
+                <span class="w-4 h-[1px] bg-zinc-700"></span> Player Registration
+              </h2>
+            </div>
+
+            <form id="registration-form" onsubmit="registerPlayer(event)" class="space-y-4">
+              <!-- Name field -->
+              <div class="space-y-1.5">
+                <label for="reg-name" class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Sorcerer Name <span class="text-red-500">*</span></label>
+                <input 
+                  type="text" 
+                  id="reg-name" 
+                  required 
+                  placeholder="e.g., Hajime Kashimo" 
+                  class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500 placeholder:text-zinc-700 transition"
+                >
+              </div>
+
+              <!-- Colony dropdown -->
+              <div class="space-y-1.5">
+                <label for="reg-colony" class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Starting Colony <span class="text-red-500">*</span></label>
+                <select 
+                  id="reg-colony" 
+                  required 
+                  class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:ring-1 focus:ring-purple-500 transition"
+                >
+                  <option value="Tokyo Colony No. 1">Tokyo Colony No. 1</option>
+                  <option value="Tokyo Colony No. 2">Tokyo Colony No. 2</option>
+                  <option value="Sendai Colony">Sendai Colony</option>
+                  <option value="Sakurajima Colony">Sakurajima Colony</option>
+                  <option value="Kyoto Colony">Kyoto Colony</option>
+                  <option value="Iwate Colony">Iwate Colony</option>
+                </select>
+              </div>
+
+              <!-- Cursed Technique text area -->
+              <div class="space-y-1.5">
+                <label for="reg-technique" class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Cursed Technique Specification <span class="text-zinc-600">(Optional)</span></label>
+                <textarea 
+                  id="reg-technique" 
+                  rows="2"
+                  placeholder="Describe intrinsic technique, domain expansion, or cursed tools..." 
+                  class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500 placeholder:text-zinc-700 resize-none scrollbar-thin"
+                ></textarea>
+              </div>
+
+              <!-- Points field -->
+              <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                  <label for="reg-points" class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Starting Points</label>
+                  <input 
+                    type="number" 
+                    id="reg-points" 
+                    value="0" 
+                    min="0" 
+                    max="1000" 
+                    class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-purple-500 transition"
+                  >
+                </div>
+                <div class="space-y-1.5">
+                  <label for="reg-status" class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Initial Status</label>
+                  <select 
+                    id="reg-status" 
+                    class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:ring-1 focus:ring-purple-500 transition"
+                  >
+                    <option value="Alive" selected>Alive (Green)</option>
+                    <option value="Deceased">Deceased (Red)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Submit button -->
+              <button 
+                type="submit" 
+                class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded text-xs uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(220,38,38,0.2)] flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                Enter the Culling Game
+              </button>
+              <p class="text-[8px] text-zinc-600 text-center mt-3 uppercase tracking-tighter">Warning: Binding vow active upon submission.</p>
+            </form>
+          </div>
+
+          <!-- TAB 2: POINT TRANSFER SIMULATOR -->
+          <div id="left-tab-transfer" class="hidden space-y-5">
+            <div>
+              <h2 class="text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-4 flex items-center gap-2">
+                <span class="w-4 h-[1px] bg-zinc-700"></span> Point Transfer
+              </h2>
+            </div>
+
+            <form id="transfer-form" onsubmit="simulateTransfer(event)" class="space-y-4">
+              <!-- Sender Selection -->
+              <div class="space-y-1.5">
+                <label for="trans-sender" class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Sender <span class="text-zinc-600">(Transfers Out)</span></label>
+                <select 
+                  id="trans-sender" 
+                  required 
+                  class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:ring-1 focus:ring-purple-500 transition"
+                >
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+
+              <!-- Receiver Selection -->
+              <div class="space-y-1.5">
+                <label for="trans-receiver" class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Receiver <span class="text-zinc-600">(Receives In)</span></label>
+                <select 
+                  id="trans-receiver" 
+                  required 
+                  class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:ring-1 focus:ring-purple-500 transition"
+                >
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+
+              <!-- Points to Transfer -->
+              <div class="space-y-1.5">
+                <label for="trans-amount" class="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Points to Transfer</label>
+                <div class="relative">
+                  <input 
+                    type="number" 
+                    id="trans-amount" 
+                    value="1" 
+                    min="1" 
+                    class="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 pr-12 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-purple-500 transition"
+                  >
+                  <span class="absolute right-3.5 top-2.5 text-xs font-mono text-zinc-600 font-bold uppercase">PTS</span>
+                </div>
+              </div>
+
+              <!-- Submit button -->
+              <button 
+                type="submit" 
+                class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 rounded text-xs uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(147,51,234,0.2)] flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                Authorize Transfer
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+        <!-- MONOSPACE KOGANE LOGS FEED (FIXED AT THE BOTTOM) -->
+        <div class="bg-zinc-950 border-t border-zinc-800 p-4 h-48 flex flex-col shrink-0">
+          <div class="flex items-center justify-between mb-2 shrink-0">
+            <span class="font-mono text-[10px] tracking-wider text-zinc-400 font-bold uppercase flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></span> Kogane Broadcast Feed
+            </span>
+            <button onclick="clearLogs()" class="font-mono text-[9px] text-zinc-600 hover:text-zinc-400 uppercase tracking-widest cursor-pointer">Clear</button>
+          </div>
+          <!-- Log List -->
+          <div id="logs-container" class="flex-1 overflow-y-auto scrollbar-thin text-[11px] font-mono space-y-1.5 pr-2">
+            <!-- Log items appended here -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- RIGHT PANEL: MONITORING GRID & STATS (70% width) -->
+      <section class="flex-1 bg-zinc-950 flex flex-col h-full overflow-hidden">
+        
+        <!-- MONITORING HEADER (STATS BAR) -->
+        <div class="h-20 flex items-center px-8 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm shrink-0">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-2 w-full max-w-7xl mx-auto font-mono">
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase text-zinc-500 tracking-widest">Active Sorcerers</span>
+              <span id="stat-total-players" class="text-2xl md:text-3xl text-zinc-100 font-black">0</span>
+            </div>
+            <div class="flex flex-col border-l border-zinc-900 md:border-zinc-800 pl-6 md:pl-12">
+              <span class="text-[10px] uppercase text-zinc-500 tracking-widest">Points Distributed</span>
+              <span id="stat-total-points" class="text-2xl md:text-3xl text-purple-400 font-black">0</span>
+            </div>
+            <div class="flex flex-col border-l border-zinc-900 md:border-zinc-800 pl-6 md:pl-12">
+              <span class="text-[10px] uppercase text-zinc-500 tracking-widest">Deceased Rate</span>
+              <span id="stat-mortality-rate" class="text-2xl md:text-3xl text-red-500 font-black">0%</span>
+            </div>
+            <div class="flex flex-col border-l border-zinc-900 md:border-zinc-800 pl-6 md:pl-12 justify-center">
+              <span class="text-[10px] uppercase text-zinc-500 tracking-widest block">Culling Rules</span>
+              <div class="flex items-center gap-2">
+                <span class="text-xl md:text-2xl text-zinc-100 font-black">19 Rules</span>
+                <button onclick="openRulesModal()" class="text-[8px] bg-zinc-900 hover:bg-zinc-800 text-zinc-400 font-mono uppercase px-1.5 py-0.5 rounded border border-zinc-800 transition cursor-pointer">View</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FILTERS & GRID CONTROLS -->
+        <div class="px-6 py-4 bg-zinc-950 border-b border-zinc-900 flex flex-col lg:flex-row items-center justify-between gap-4 shrink-0">
+          
+          <!-- Search Field -->
+          <div class="relative w-full lg:w-96">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-500">
+              <!-- Search Icon SVG -->
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </span>
+            <input 
+              type="text" 
+              id="search-input" 
+              oninput="handleFilterChange()" 
+              placeholder="Search Sorcerers, Techniques..." 
+              class="w-full bg-zinc-900 border border-zinc-800 rounded pl-10 pr-4 py-2 text-sm text-zinc-200 placeholder-zinc-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition"
+            >
+          </div>
+
+          <!-- Colony & Status Select Toggles -->
+          <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
+            <!-- Colony Filter Dropdown -->
+            <select 
+              id="filter-colony" 
+              onchange="handleFilterChange()" 
+              class="bg-zinc-900 border border-zinc-800 rounded px-3.5 py-2 text-xs text-zinc-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition uppercase tracking-wider font-mono"
+            >
+              <option value="ALL">All Colonies</option>
+              <option value="Tokyo Colony No. 1">Tokyo No. 1</option>
+              <option value="Tokyo Colony No. 2">Tokyo No. 2</option>
+              <option value="Sendai Colony">Sendai</option>
+              <option value="Sakurajima Colony">Sakurajima</option>
+              <option value="Kyoto Colony">Kyoto</option>
+              <option value="Iwate Colony">Iwate</option>
+            </select>
+
+            <!-- Status Toggles -->
+            <div class="flex bg-zinc-900 p-0.5 rounded border border-zinc-800 text-[11px] font-mono uppercase tracking-wider">
+              <button onclick="setStatusFilter('ALL')" id="filter-status-all" class="px-3.5 py-1.5 rounded text-purple-400 bg-zinc-850 font-bold transition">All</button>
+              <button onclick="setStatusFilter('Alive')" id="filter-status-alive" class="px-3.5 py-1.5 rounded text-zinc-400 hover:text-zinc-200 transition">Alive</button>
+              <button onclick="setStatusFilter('Deceased')" id="filter-status-deceased" class="px-3.5 py-1.5 rounded text-zinc-400 hover:text-zinc-200 transition">Deceased</button>
+            </div>
+
+            <!-- Reset Database -->
+            <button 
+              onclick="resetSystem()" 
+              class="p-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-500 hover:text-red-400 rounded border border-zinc-800 hover:border-red-900/50 transition-all cursor-pointer"
+              title="Reset System to Default Sorcerers"
+            >
+              <!-- Refresh Icon SVG -->
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H17" /></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- SCROLLABLE GRID CONTAINER -->
+        <div class="flex-1 overflow-y-auto p-6 scrollbar-thin">
+          <div class="max-w-7xl mx-auto">
+            <!-- Grid Layout -->
+            <div id="players-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Cards dynamically inserted here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-center">
+              <div class="w-14 h-14 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-600 mb-4 animate-bounce">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              </div>
+              <h3 class="font-display font-bold text-zinc-300 tracking-wider text-base uppercase">No Sorcerers Detected</h3>
+              <p class="text-zinc-500 font-mono text-xs mt-1 max-w-sm">No sorcerers match your search criteria. Register a new sorcerer or reset the panel database to default settings.</p>
+              <button onclick="resetSystem()" class="mt-4 px-4 py-2 bg-purple-950/40 hover:bg-purple-900/40 border border-purple-900 text-purple-400 font-mono text-xs uppercase tracking-widest rounded transition">Reset Database</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER TACTICAL STATUS BAR -->
+        <footer class="bg-zinc-900 border-t border-zinc-800 px-6 py-2 flex items-center justify-between text-[9px] font-mono text-zinc-500 shrink-0 select-none uppercase tracking-wider">
+          <div class="flex items-center gap-6">
+            <span class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 active-pulse"></span>
+              <span>Network: Stable (Vow-Bound)</span>
+            </span>
+            <span class="hidden md:inline">Data Stream: ID-88219-JK</span>
+          </div>
+          <span class="text-zinc-600 italic">"The Game persists as long as rules are obeyed."</span>
+        </footer>
+
+      </section>
+
+    </main>
+
+    <!-- RULES MANUAL MODAL OVERLAY -->
+    <div id="rules-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-all duration-300">
+      <div class="bg-zinc-900 border border-zinc-800 rounded-lg w-full max-w-2xl max-h-[85vh] flex flex-col shadow-[0_0_50px_rgba(139,92,246,0.15)]">
+        <!-- Header -->
+        <div class="p-5 border-b border-zinc-800 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 bg-purple-500 rounded-full"></span>
+            <div>
+              <h3 class="font-display font-bold text-zinc-100 uppercase tracking-widest text-sm">Culling Game Declarative Rules</h3>
+              <p class="text-zinc-500 font-mono text-[10px] uppercase">The binding vow governing Kenjaku's game board</p>
+            </div>
+          </div>
+          <button onclick="closeRulesModal()" class="text-zinc-500 hover:text-zinc-200 transition p-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <!-- Content -->
+        <div class="p-6 overflow-y-auto scrollbar-thin space-y-4 text-xs font-mono leading-relaxed text-zinc-400">
+          <p class="text-zinc-300 italic mb-3">"Players are given points by killing other sorcerers. Points correspond to the life of Jūjutsu Sorcerers or Non-Sorcerers..."</p>
+          
+          <div class="space-y-3.5">
+            <div>
+              <span class="text-purple-400 font-bold block mb-1">RULE 1 • DECLARATIVE PARTICIPATION</span>
+              <p>Upon gaining a cursed technique or waking up inside a barrier, players must declare participation in the Culling Game in their starting colony within 19 days.</p>
+            </div>
+            <div class="h-px bg-zinc-800/80"></div>
+            <div>
+              <span class="text-purple-400 font-bold block mb-1">RULE 2 • PENALTY OF DEATH</span>
+              <p>Any player who breaks Rule 1 shall suffer cursed technique extraction, which inevitably results in immediate brain death and cardiac arrest.</p>
+            </div>
+            <div class="h-px bg-zinc-800/80"></div>
+            <div>
+              <span class="text-purple-400 font-bold block mb-1">RULE 5 • ACQUIRING POINTS</span>
+              <p>Players obtain points by taking the life of other participants. Shaman/Sorcerer deaths yield 5 points. Non-shaman deaths yield 1 point.</p>
+            </div>
+            <div class="h-px bg-zinc-800/80"></div>
+            <div>
+              <span class="text-purple-400 font-bold block mb-1">RULE 10 • POINT TRANSFER</span>
+              <p>Players may transfer any number of their points to another participant. Koganes will act as the intermediary agent for all score adjustments.</p>
+            </div>
+            <div class="h-px bg-zinc-800/80"></div>
+            <div>
+              <span class="text-purple-400 font-bold block mb-1">RULE 11 • CUSTOM RULE ADDITION</span>
+              <p>Except where it would have a significant negative impact on the longevity of the game, players may spend 100 points to negotiate and add a new rule to the Game Board with their Kogane.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Footer -->
+        <div class="p-4 bg-zinc-950 border-t border-zinc-800 flex justify-end">
+          <button onclick="closeRulesModal()" class="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded font-mono text-xs uppercase tracking-wider transition">Acknowledge Rules</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN ENGINE CODE -->
+    <script>
+      // -------------------------------------------------------------
+      // 1. Initial Seed Data
+      // -------------------------------------------------------------
+      const initialPlayers = [
+        { id: "1", name: "Yuta Okkotsu", colony: "Sendai Colony", technique: "Copy / Rika Manifestation", points: 190, status: "Alive" },
+        { id: "2", name: "Hajime Kashimo", colony: "Tokyo Colony No. 2", technique: "Phantom Beast Amber (Electrification)", points: 200, status: "Alive" },
+        { id: "3", name: "Hiromi Higuruma", colony: "Tokyo Colony No. 1", technique: "Deadly Sentencing (Domain Expansion)", points: 100, status: "Alive" },
+        { id: "4", name: "Megumi Fushiguro", colony: "Tokyo Colony No. 1", technique: "Ten Shadows Technique", points: 40, status: "Alive" },
+        { id: "5", name: "Yuji Itadori", colony: "Tokyo Colony No. 1", technique: "Divergent Fist / Shrine", points: 1, status: "Alive" },
+        { id: "6", name: "Reggie Star", colony: "Tokyo Colony No. 1", technique: "Contract Re-creation", points: 41, status: "Deceased" },
+        { id: "7", name: "Ryu Ishigori", colony: "Sendai Colony", technique: "Granite Blast (Cursed Energy Discharge)", points: 77, status: "Deceased" },
+        { id: "8", name: "Takako Uro", colony: "Sendai Colony", technique: "Sky Manipulation", points: 70, status: "Alive" },
+        { id: "9", name: "Kurourushi", colony: "Sendai Colony", technique: "Parthenogenesis / Earth-Buster Cockroach", points: 54, status: "Deceased" }
+      ];
+
+      // -------------------------------------------------------------
+      // 2. Global State Variables
+      // -------------------------------------------------------------
+      let players = [];
+      let currentLeftTab = 'register'; // 'register' or 'transfer'
+      let currentStatusFilter = 'ALL'; // 'ALL', 'Alive', 'Deceased'
+
+      // -------------------------------------------------------------
+      // 3. Application Lifecycle Setup
+      // -------------------------------------------------------------
+      window.onload = function() {
+        // Load data from localStorage or seed database if empty
+        const storedPlayers = localStorage.getItem('culling_games_sorcerers');
+        if (storedPlayers) {
+          try {
+            players = JSON.parse(storedPlayers);
+          } catch(e) {
+            players = [...initialPlayers];
+          }
+        } else {
+          players = [...initialPlayers];
+          localStorage.setItem('culling_games_sorcerers', JSON.stringify(players));
+        }
+
+        // Initialize display components
+        addLog("KOGANE MONITORING ENGINE STABLE. Handshake established.", "system");
+        addLog(`LOADED: ${players.length} active combatant profiles found.`, "info");
+        
+        // Refresh entire UI
+        updateUI();
+        
+        // Start live ticking clock
+        startClock();
+      };
+
+      // -------------------------------------------------------------
+      // 4. Persistence & UI Sync
+      // -------------------------------------------------------------
+      function saveToStorage() {
+        localStorage.setItem('culling_games_sorcerers', JSON.stringify(players));
+      }
+
+      function updateUI() {
+        renderPlayers();
+        renderStats();
+        populateTransferSelects();
+      }
+
+      // -------------------------------------------------------------
+      // 5. Clock Ticker
+      // -------------------------------------------------------------
+      function startClock() {
+        const systemClockEl = document.getElementById('system-clock');
+        setInterval(() => {
+          const now = new Date();
+          const formatStr = now.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+          systemClockEl.innerText = formatStr;
+        }, 1000);
+      }
+
+      // -------------------------------------------------------------
+      // 6. Kogane Broadcast Logs Feed
+      // -------------------------------------------------------------
+      function addLog(text, type = "info") {
+        const logsContainer = document.getElementById('logs-container');
+        const now = new Date();
+        const timeStr = now.toTimeString().split(' ')[0];
+        
+        let colorClass = "text-zinc-500";
+        let prefix = "●";
+
+        if (type === "system") {
+          colorClass = "text-purple-400 font-bold";
+          prefix = "⚡ [SYS]";
+        } else if (type === "success") {
+          colorClass = "text-emerald-400";
+          prefix = "✔ [KOG]";
+        } else if (type === "danger") {
+          colorClass = "text-red-500";
+          prefix = "☠ [DEAD]";
+        } else if (type === "transfer") {
+          colorClass = "text-yellow-400";
+          prefix = "⇄ [PTS]";
+        } else if (type === "info") {
+          colorClass = "text-zinc-400";
+          prefix = "ℹ [INFO]";
+        }
+
+        const logItem = document.createElement('div');
+        logItem.className = `flex items-start gap-1.5 ${colorClass} leading-tight border-b border-zinc-900 pb-1`;
+        logItem.innerHTML = `
+          <span class="text-[9px] text-zinc-600 shrink-0 font-mono">${timeStr}</span>
+          <span class="shrink-0 text-[10px]">${prefix}</span>
+          <span class="break-words">${text}</span>
+        `;
+        
+        logsContainer.appendChild(logItem);
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+      }
+
+      function clearLogs() {
+        document.getElementById('logs-container').innerHTML = '';
+        addLog("Kogane broadcast memory purged.", "system");
+      }
+
+      // -------------------------------------------------------------
+      // 7. Left Panel Tab Switching
+      // -------------------------------------------------------------
+      function switchLeftTab(tab) {
+        currentLeftTab = tab;
+        const regBtn = document.getElementById('tab-register-btn');
+        const transBtn = document.getElementById('tab-transfer-btn');
+        const regPanel = document.getElementById('left-tab-register');
+        const transPanel = document.getElementById('left-tab-transfer');
+
+        if (tab === 'register') {
+          regBtn.className = "flex-1 py-3 text-center border-b-2 border-purple-500 text-purple-400 font-bold bg-zinc-900/50 transition";
+          transBtn.className = "flex-1 py-3 text-center border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 transition";
+          regPanel.classList.remove('hidden');
+          transPanel.classList.add('hidden');
+        } else {
+          transBtn.className = "flex-1 py-3 text-center border-b-2 border-purple-500 text-purple-400 font-bold bg-zinc-900/50 transition";
+          regBtn.className = "flex-1 py-3 text-center border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 transition";
+          transPanel.classList.remove('hidden');
+          regPanel.classList.add('hidden');
+          populateTransferSelects();
+        }
+      }
+
+      // -------------------------------------------------------------
+      // 8. Player Rendering & Grid Engine
+      // -------------------------------------------------------------
+      function renderPlayers() {
+        const grid = document.getElementById('players-grid');
+        const emptyState = document.getElementById('empty-state');
+        grid.innerHTML = '';
+
+        const searchVal = document.getElementById('search-input').value.toLowerCase().trim();
+        const colonyFilter = document.getElementById('filter-colony').value;
+
+        // Apply filters
+        const filteredPlayers = players.filter(player => {
+          // Name or technique match
+          const matchesSearch = player.name.toLowerCase().includes(searchVal) || 
+                                (player.technique && player.technique.toLowerCase().includes(searchVal));
+          
+          // Colony match
+          const matchesColony = (colonyFilter === 'ALL' || player.colony === colonyFilter);
+          
+          // Status match
+          const matchesStatus = (currentStatusFilter === 'ALL' || player.status === currentStatusFilter);
+
+          return matchesSearch && matchesColony && matchesStatus;
+        });
+
+        if (filteredPlayers.length === 0) {
+          grid.classList.add('hidden');
+          emptyState.classList.remove('hidden');
+          return;
+        }
+
+        grid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+
+        filteredPlayers.forEach(player => {
+          const isAlive = player.status === "Alive";
+          
+          const card = document.createElement('div');
+          card.className = `bg-zinc-900 border border-zinc-800 p-5 rounded-lg flex flex-col shadow-lg border-l-4 ${isAlive ? 'border-l-emerald-500 hover:border-purple-600/60' : 'border-l-red-500 opacity-65 hover:opacity-85'} transition-all duration-300 hover:shadow-[0_0_20px_rgba(139,92,246,0.12)]`;
+          
+          card.innerHTML = `
+            <!-- Card Header -->
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-zinc-100 font-bold text-base ${isAlive ? '' : 'line-through text-zinc-500'}">${player.name}</h3>
+              <button 
+                onclick="toggleLifeStatus('${player.id}')" 
+                class="flex items-center gap-1.5 px-2.5 py-1 rounded text-[9px] font-mono uppercase tracking-widest border transition duration-200 cursor-pointer ${isAlive ? 'bg-emerald-950/20 border-emerald-900/50 text-emerald-400 hover:bg-emerald-900/35' : 'bg-red-950/20 border-red-900/50 text-red-400 hover:bg-red-900/35'}"
+                title="Toggle Life Status"
+              >
+                <span class="w-1.5 h-1.5 rounded-full ${isAlive ? 'bg-emerald-400 active-pulse' : 'bg-red-500'}"></span>
+                <span>${player.status}</span>
+              </button>
+            </div>
+
+            <!-- Colony Title -->
+            <span class="text-[9px] uppercase text-zinc-500 tracking-widest mb-3 block font-mono">
+              ${player.colony}
+            </span>
+
+            <!-- Technique Specification -->
+            <p class="text-zinc-400 text-xs leading-normal bg-zinc-950/40 border border-zinc-850/80 p-2.5 rounded font-sans min-h-[48px] mb-4">
+              ${player.technique ? player.technique : '<span class="text-zinc-600 italic">No declared Cursed Technique</span>'}
+            </p>
+
+            <!-- Point Display and quick actions -->
+            <div class="mt-auto pt-4 border-t border-zinc-800/60 flex items-center justify-between">
+              <div>
+                <span class="text-[9px] uppercase text-zinc-500 tracking-widest block font-mono">Points</span>
+                <div class="text-3xl font-mono ${isAlive ? 'text-purple-400' : 'text-zinc-600'} font-black">${player.points}</div>
+              </div>
+              
+              <div class="flex items-center gap-1">
+                ${isAlive ? `
+                  <button 
+                    onclick="adjustPoints('${player.id}', -1)"
+                    class="bg-zinc-950 border border-zinc-800 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-250 px-2.5 py-1.5 rounded text-[10px] font-mono transition cursor-pointer"
+                    title="-1 Point"
+                  >
+                    -1 PTS
+                  </button>
+                  <button 
+                    onclick="adjustPoints('${player.id}', 1)"
+                    class="bg-zinc-950 border border-zinc-800 hover:bg-zinc-850 text-purple-400 hover:text-purple-300 px-2.5 py-1.5 rounded text-[10px] font-mono transition cursor-pointer"
+                    title="+1 Point"
+                  >
+                    +1 PTS
+                  </button>
+                ` : `
+                  <button 
+                    class="bg-zinc-950/50 border border-zinc-800/50 px-4 py-1.5 rounded text-[10px] font-mono text-zinc-700 cursor-not-allowed uppercase"
+                    disabled
+                  >
+                    LOCKED
+                  </button>
+                `}
+                
+                <!-- Eradicate/Delete Button -->
+                <button 
+                  onclick="deletePlayer('${player.id}')"
+                  class="bg-zinc-950 border border-zinc-800 hover:border-red-950/60 hover:text-red-400 text-zinc-600 p-1.5 rounded transition cursor-pointer"
+                  title="Eradicate Sorcerer"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                </button>
+              </div>
+            </div>
+          `;
+          
+          grid.appendChild(card);
+        });
+      }
+
+      // -------------------------------------------------------------
+      // 9. Stats Generator
+      // -------------------------------------------------------------
+      function renderStats() {
+        const totalPlayers = players.length;
+        const totalPoints = players.reduce((sum, p) => sum + p.points, 0);
+        const totalDeceased = players.filter(p => p.status === "Deceased").length;
+        
+        // Calculate Mortality rate
+        const mortalityRate = totalPlayers > 0 ? Math.round((totalDeceased / totalPlayers) * 100) : 0;
+
+        document.getElementById('stat-total-players').innerText = totalPlayers;
+        document.getElementById('stat-total-points').innerText = totalPoints;
+        document.getElementById('stat-mortality-rate').innerText = `${mortalityRate}%`;
+      }
+
+      // -------------------------------------------------------------
+      // 10. Filter Handler Actions
+      // -------------------------------------------------------------
+      function handleFilterChange() {
+        renderPlayers();
+      }
+
+      function setStatusFilter(status) {
+        currentStatusFilter = status;
+        
+        // Update Filter tabs styling
+        const allBtn = document.getElementById('filter-status-all');
+        const aliveBtn = document.getElementById('filter-status-alive');
+        const deceasedBtn = document.getElementById('filter-status-deceased');
+
+        const inactiveClass = "px-3.5 py-1.5 rounded text-zinc-400 hover:text-zinc-200 transition";
+        const activeClass = "px-3.5 py-1.5 rounded text-purple-400 bg-zinc-850 font-bold transition";
+
+        allBtn.className = inactiveClass;
+        aliveBtn.className = inactiveClass;
+        deceasedBtn.className = inactiveClass;
+
+        if (status === 'ALL') allBtn.className = activeClass;
+        else if (status === 'Alive') aliveBtn.className = activeClass;
+        else if (status === 'Deceased') deceasedBtn.className = activeClass;
+
+        renderPlayers();
+      }
+
+      // -------------------------------------------------------------
+      // 11. Sorcerer Registration (Form Submit)
+      // -------------------------------------------------------------
+      function registerPlayer(e) {
+        e.preventDefault();
+
+        const nameInput = document.getElementById('reg-name');
+        const colonySelect = document.getElementById('reg-colony');
+        const techInput = document.getElementById('reg-technique');
+        const pointsInput = document.getElementById('reg-points');
+        const statusSelect = document.getElementById('reg-status');
+
+        const newSorcerer = {
+          id: Date.now().toString(),
+          name: nameInput.value.trim(),
+          colony: colonySelect.value,
+          technique: techInput.value.trim() || "",
+          points: parseInt(pointsInput.value, 10) || 0,
+          status: statusSelect.value
+        };
+
+        // Add to array
+        players.unshift(newSorcerer);
+        
+        // Save & Sync
+        saveToStorage();
+        updateUI();
+
+        // Broadcast Log
+        addLog(`DECLARATION: ${newSorcerer.name} entered ${newSorcerer.colony}. Cursed technique synchronized.`, "success");
+
+        // Clear Form fields
+        nameInput.value = '';
+        techInput.value = '';
+        pointsInput.value = '0';
+        statusSelect.value = 'Alive';
+
+        // Scroll grid back to top to show newly added card
+        document.getElementById('players-grid').scrollIntoView({ behavior: 'smooth' });
+      }
+
+      // -------------------------------------------------------------
+      // 12. Adjust Individual Points
+      // -------------------------------------------------------------
+      function adjustPoints(id, amount) {
+        const playerIndex = players.findIndex(p => p.id === id);
+        if (playerIndex === -1) return;
+
+        const player = players[playerIndex];
+        const oldPoints = player.points;
+        const newPoints = Math.max(0, player.points + amount);
+
+        if (oldPoints === newPoints) return; // No change
+
+        players[playerIndex].points = newPoints;
+        saveToStorage();
+        updateUI();
+
+        addLog(`Rule #10 Adjust: Kogane synchronized ${player.name}'s points (${oldPoints} PTS ➔ ${newPoints} PTS).`, "transfer");
+      }
+
+      // -------------------------------------------------------------
+      // 13. Life/Death Status Toggle
+      // -------------------------------------------------------------
+      function toggleLifeStatus(id) {
+        const playerIndex = players.findIndex(p => p.id === id);
+        if (playerIndex === -1) return;
+
+        const player = players[playerIndex];
+        const newStatus = player.status === "Alive" ? "Deceased" : "Alive";
+        
+        players[playerIndex].status = newStatus;
+        saveToStorage();
+        updateUI();
+
+        if (newStatus === "Deceased") {
+          addLog(`DEATH NOTIFICATION: Sorcerer ${player.name} eradicated in combat.`, "danger");
+        } else {
+          addLog(`RESTORATION: Sorcerer ${player.name} reconstructed via Reverse Cursed Technique.`, "success");
+        }
+      }
+
+      // -------------------------------------------------------------
+      // 14. Eliminate Sorcerer (Delete)
+      // -------------------------------------------------------------
+      function deletePlayer(id) {
+        const player = players.find(p => p.id === id);
+        if (!player) return;
+
+        if (confirm(`Eradicate all Kogane telemetry data for "${player.name}"? This cannot be undone.`)) {
+          players = players.filter(p => p.id !== id);
+          saveToStorage();
+          updateUI();
+          addLog(`SYSTEM: ${player.name} registry deleted. All Kogane traces vaporized.`, "danger");
+        }
+      }
+
+      // -------------------------------------------------------------
+      // 15. Point Transfer Simulation Engine
+      // -------------------------------------------------------------
+      function populateTransferSelects() {
+        const senderSelect = document.getElementById('trans-sender');
+        const receiverSelect = document.getElementById('trans-receiver');
+        
+        if (!senderSelect || !receiverSelect) return;
+
+        senderSelect.innerHTML = '';
+        receiverSelect.innerHTML = '';
+
+        // Only alive sorcerers who have points are recommended for sender (though anyone alive can theoretically transfer)
+        const eligibleSenders = players.filter(p => p.status === "Alive");
+        const eligibleReceivers = players.filter(p => p.status === "Alive");
+
+        if (eligibleSenders.length === 0) {
+          senderSelect.innerHTML = '<option value="">No Active Sorcerers</option>';
+          receiverSelect.innerHTML = '<option value="">No Active Sorcerers</option>';
+          return;
+        }
+
+        eligibleSenders.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.innerText = `${p.name} (${p.points} Pts)`;
+          senderSelect.appendChild(opt);
+        });
+
+        eligibleReceivers.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.innerText = p.name;
+          receiverSelect.appendChild(opt);
+        });
+
+        // Set non-overlapping defaults if possible
+        if (senderSelect.options.length > 1) {
+          receiverSelect.selectedIndex = 1;
+        }
+      }
+
+      function simulateTransfer(e) {
+        e.preventDefault();
+
+        const senderId = document.getElementById('trans-sender').value;
+        const receiverId = document.getElementById('trans-receiver').value;
+        const amountInput = document.getElementById('trans-amount');
+        const amount = parseInt(amountInput.value, 10);
+
+        if (!senderId || !receiverId) {
+          alert("Must select both a sender and a receiver.");
+          return;
+        }
+
+        if (senderId === receiverId) {
+          alert("A participant cannot transfer points to themselves under Game Rule #10.");
+          return;
+        }
+
+        const senderIndex = players.findIndex(p => p.id === senderId);
+        const receiverIndex = players.findIndex(p => p.id === receiverId);
+
+        if (senderIndex === -1 || receiverIndex === -1) return;
+
+        const sender = players[senderIndex];
+        const receiver = players[receiverIndex];
+
+        if (sender.points < amount) {
+          alert(`Insufficient Points. ${sender.name} only has ${sender.points} points, but you are attempting to transfer ${amount}.`);
+          return;
+        }
+
+        // Deduct & Add
+        players[senderIndex].points -= amount;
+        players[receiverIndex].points += amount;
+
+        saveToStorage();
+        updateUI();
+
+        addLog(`POINT TRANSFER COMPLETE: ${sender.name} sent ${amount} PTS to ${receiver.name}. Approved by Kogane.`, "transfer");
+
+        // Reset points amount value
+        amountInput.value = '1';
+
+        // Pop up alert or animate confirmation
+        alert(`Rule #10 Enforced!\n${amount} points successfully transferred from ${sender.name} to ${receiver.name}.`);
+      }
+
+      // -------------------------------------------------------------
+      // 16. Reset System
+      // -------------------------------------------------------------
+      function resetSystem() {
+        if (confirm("Restore the monitoring panel to initial game registry state? All custom-registered sorcerers and point modifications will be purged.")) {
+          players = [...initialPlayers];
+          saveToStorage();
+          updateUI();
+          
+          // Reset filters
+          document.getElementById('search-input').value = '';
+          document.getElementById('filter-colony').value = 'ALL';
+          setStatusFilter('ALL');
+
+          clearLogs();
+          addLog("SYSTEM RESTORED. Initial Culling Game contestant matrix re-loaded.", "system");
+        }
+      }
+
+      // -------------------------------------------------------------
+      // 17. Rules Modal Overlay Controls
+      // -------------------------------------------------------------
+      function openRulesModal() {
+        document.getElementById('rules-modal').classList.remove('hidden');
+      }
+
+      function closeRulesModal() {
+        document.getElementById('rules-modal').classList.add('hidden');
+      }
+    </script>
+  </body>
+</html>
